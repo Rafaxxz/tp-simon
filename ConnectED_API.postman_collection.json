@@ -1,0 +1,379 @@
+{
+	"info": {
+		"_postman_id": "connected-backend-api",
+		"name": "ConnectED Backend API",
+		"description": "Colección completa de endpoints para ConnectED Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "0. Authentication",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Save JWT Token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"jwt_token\", jsonData.jwttoken);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": "{{base_url}}/authenticate"
+					}
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"user\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/authenticate"
+					}
+				}
+			]
+		},
+		{
+			"name": "1. Estudiantes",
+			"item": [
+				{
+					"name": "Listar Estudiantes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/estudiantes"
+					}
+				},
+				{
+					"name": "Crear Estudiante",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"carlos.perez@connected.edu\",\n  \"fechaNacimiento\": \"2002-03-15\",\n  \"telefono\": \"987654321\",\n  \"direccion\": \"Av. Lima 123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/estudiantes"
+					}
+				},
+				{
+					"name": "Buscar Estudiante por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/estudiantes/1"
+					}
+				},
+				{
+					"name": "Actualizar Estudiante",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Carlos Actualizado\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"carlos.perez@connected.edu\",\n  \"fechaNacimiento\": \"2002-03-15\",\n  \"telefono\": \"987654321\",\n  \"direccion\": \"Av. Lima 456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/estudiantes/1"
+					}
+				},
+				{
+					"name": "Buscar por Nombre",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/estudiantes/buscar/nombre?nombre=Ana",
+							"host": ["{{base_url}}"],
+							"path": ["api", "estudiantes", "buscar", "nombre"],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "Ana"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Top Inscripciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/estudiantes/top-inscripciones?cantidad=2",
+							"host": ["{{base_url}}"],
+							"path": ["api", "estudiantes", "top-inscripciones"],
+							"query": [
+								{
+									"key": "cantidad",
+									"value": "2"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Profesores",
+			"item": [
+				{
+					"name": "Listar Profesores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/profesores"
+					}
+				},
+				{
+					"name": "Crear Profesor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Roberto\",\n  \"apellido\": \"Fernández\",\n  \"email\": \"roberto.fernandez@connected.edu\",\n  \"especialidad\": \"Química\",\n  \"telefono\": \"987654324\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/profesores"
+					}
+				},
+				{
+					"name": "Buscar por Especialidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/profesores/especialidad/Matemáticas"
+					}
+				},
+				{
+					"name": "Profesores con Mínimo Cursos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/profesores/min-cursos?cantidad=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "profesores", "min-cursos"],
+							"query": [
+								{
+									"key": "cantidad",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Cursos",
+			"item": [
+				{
+					"name": "Listar Cursos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/cursos"
+					}
+				},
+				{
+					"name": "Crear Curso",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombreCurso\": \"Estadística\",\n  \"descripcion\": \"Análisis estadístico y probabilidades\",\n  \"creditos\": 4,\n  \"fechaInicio\": \"2025-03-01\",\n  \"fechaFin\": \"2025-07-15\",\n  \"idProfesor\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/cursos"
+					}
+				},
+				{
+					"name": "Cursos por Profesor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/cursos/profesor/1"
+					}
+				},
+				{
+					"name": "Cursos Activos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/cursos/activos"
+					}
+				},
+				{
+					"name": "Cursos por Créditos Mínimos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cursos/creditos-minimos?creditos=3",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cursos", "creditos-minimos"],
+							"query": [
+								{
+									"key": "creditos",
+									"value": "3"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Inscripciones",
+			"item": [
+				{
+					"name": "Listar Inscripciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/inscripciones"
+					}
+				},
+				{
+					"name": "Crear Inscripción",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idEstudiante\": 1,\n  \"idCurso\": 1,\n  \"fechaInscripcion\": \"2025-02-15\",\n  \"estado\": \"Inscrito\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/inscripciones"
+					}
+				},
+				{
+					"name": "Inscripciones por Estudiante",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/inscripciones/estudiante/1"
+					}
+				},
+				{
+					"name": "Inscripciones por Curso",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/inscripciones/curso/1"
+					}
+				},
+				{
+					"name": "Inscripciones por Estado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/inscripciones/estado/Inscrito"
+					}
+				},
+				{
+					"name": "Promedio por Curso",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/inscripciones/promedio-curso/1"
+					}
+				},
+				{
+					"name": "Inscripciones con Calificación Mínima",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inscripciones/calificacion-minima?calificacion=15.0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inscripciones", "calificacion-minima"],
+							"query": [
+								{
+									"key": "calificacion",
+									"value": "15.0"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
