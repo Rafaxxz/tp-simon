@@ -1,5 +1,5 @@
-# Imagen base simple
-FROM maven:3.8.6-openjdk-17-slim
+# Imagen base que SÍ existe
+FROM maven:3.8-openjdk-17
 
 # Directorio de trabajo
 WORKDIR /app
