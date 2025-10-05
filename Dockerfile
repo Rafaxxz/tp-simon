@@ -13,8 +13,8 @@ RUN mvn dependency:go-offline -B
 # Copia el código fuente
 COPY src src
 
-# Construye la aplicación
-RUN mvn clean package -DskipTests
+# Construye la aplicación y verifica el JAR
+RUN mvn clean package -DskipTests && ls -la /app/target/
 
 # Imagen final más ligera
 FROM eclipse-temurin:17-jre-alpine
@@ -23,7 +23,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Copia el JAR generado desde la imagen de build
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar ./app.jar
 
 # Expone el puerto 8080
 EXPOSE 8080
@@ -32,4 +32,4 @@ EXPOSE 8080
 ENV JAVA_OPTS="-Xmx400m -Xss512k"
 
 # Verifica que el JAR existe y ejecuta la aplicación
-CMD ["sh", "-c", "ls -la /app && java $JAVA_OPTS -jar /app/app.jar"]
+CMD ["sh", "-c", "ls -la /app/ && java $JAVA_OPTS -jar ./app.jar"]
