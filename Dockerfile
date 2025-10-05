@@ -17,7 +17,7 @@ COPY src src
 RUN mvn clean package -DskipTests
 
 # Imagen final más ligera
-FROM openjdk:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Establece el directorio de trabajo
 WORKDIR /app
