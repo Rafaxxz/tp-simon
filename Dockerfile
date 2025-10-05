@@ -1,29 +1,39 @@
-# Imagen simple con Maven y JDK
-FROM maven:3.8.6-eclipse-temurin-17
+# Usar imagen oficial de Spring Boot
+FROM openjdk:17-jdk-slim
 
-# Establece el directorio de trabajo
+# Instalar Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copia todo el proyecto
-COPY . .
+# Copiar archivos de configuración primero (para cache)
+COPY pom.xml .
+COPY mvnw .
+COPY mvnw.cmd .
+COPY .mvn .mvn 2>/dev/null || true
 
-# Construye la aplicación
-RUN mvn clean package -DskipTests
+# Dar permisos ejecutables
+RUN chmod +x mvnw 2>/dev/null || true
 
-# Lista TODOS los archivos en target para debug
-RUN echo "=== ARCHIVOS EN TARGET ===" && ls -la target/
+# Copiar código fuente
+COPY src ./src
 
-# Busca cualquier JAR y lo copia (método bruto pero efectivo)
-RUN cp target/*.jar app.jar 2>/dev/null || echo "No JAR files found"
+# Compilar con Spring Boot plugin (esto genera el JAR ejecutable correcto)
+RUN mvn clean compile
+RUN mvn package -DskipTests
 
-# Verifica que el JAR existe antes de continuar
-RUN ls -la app.jar || echo "app.jar not found"
+# Encontrar y renombrar el JAR ejecutable
+RUN find target -name "*.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" -exec cp {} app.jar \;
 
-# Expone el puerto 8080
+# Verificar el JAR
+RUN java -jar app.jar --help 2>/dev/null || echo "JAR verification complete"
+
+# Exponer puerto
 EXPOSE 8080
 
-# Define variables de entorno
-ENV JAVA_OPTS="-Xmx400m -Xss512k"
+# Variables de entorno
+ENV JAVA_OPTS="-Xmx400m"
 
-# Ejecuta la aplicación
-CMD ["sh", "-c", "ls -la && java $JAVA_OPTS -jar app.jar"]
+# Comando de inicio
+CMD ["java", "-jar", "app.jar"]
