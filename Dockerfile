@@ -1,39 +1,20 @@
-# Usar imagen oficial de Spring Boot
-FROM openjdk:17-jdk-slim
+# Imagen base simple
+FROM maven:3.8.6-openjdk-17-slim
 
-# Instalar Maven
-RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-
-# Establecer directorio de trabajo
+# Directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos de configuración primero (para cache)
-COPY pom.xml .
-COPY mvnw .
-COPY mvnw.cmd .
-COPY .mvn .mvn 2>/dev/null || true
+# Copiar todo el proyecto
+COPY . .
 
-# Dar permisos ejecutables
-RUN chmod +x mvnw 2>/dev/null || true
+# Compilar la aplicación
+RUN mvn clean package -DskipTests
 
-# Copiar código fuente
-COPY src ./src
+# Copiar el JAR resultado
+RUN cp target/*.jar app.jar
 
-# Compilar con Spring Boot plugin (esto genera el JAR ejecutable correcto)
-RUN mvn clean compile
-RUN mvn package -DskipTests
-
-# Encontrar y renombrar el JAR ejecutable
-RUN find target -name "*.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" -exec cp {} app.jar \;
-
-# Verificar el JAR
-RUN java -jar app.jar --help 2>/dev/null || echo "JAR verification complete"
-
-# Exponer puerto
+# Puerto
 EXPOSE 8080
 
-# Variables de entorno
-ENV JAVA_OPTS="-Xmx400m"
-
-# Comando de inicio
+# Ejecutar aplicación
 CMD ["java", "-jar", "app.jar"]
