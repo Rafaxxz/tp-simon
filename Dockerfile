@@ -10,11 +10,14 @@ COPY . .
 # Compilar la aplicación
 RUN mvn clean package -DskipTests
 
-# Copiar el JAR resultado
-RUN cp target/*.jar app.jar
+# Debug: Ver qué archivos se generaron
+RUN ls -la target/
+
+# Copiar el WAR (no JAR) y renombrarlo
+RUN cp target/*.war app.jar
 
 # Puerto
 EXPOSE 8080
 
-# Ejecutar aplicación
+# Ejecutar aplicación (Spring Boot puede ejecutar WAR como JAR)
 CMD ["java", "-jar", "app.jar"]
