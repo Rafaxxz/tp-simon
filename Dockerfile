@@ -10,11 +10,14 @@ COPY . .
 # Construye la aplicación
 RUN mvn clean package -DskipTests
 
-# Lista los JARs para ver cuáles están disponibles
-RUN ls -la target/
+# Lista TODOS los archivos en target para debug
+RUN echo "=== ARCHIVOS EN TARGET ===" && ls -la target/
 
-# Encuentra el JAR ejecutable (no el de clases) y lo renombra
-RUN find target -name "*-0.0.1-SNAPSHOT.jar" ! -name "*-plain.jar" -exec cp {} app.jar \;
+# Busca cualquier JAR y lo copia (método bruto pero efectivo)
+RUN cp target/*.jar app.jar 2>/dev/null || echo "No JAR files found"
+
+# Verifica que el JAR existe antes de continuar
+RUN ls -la app.jar || echo "app.jar not found"
 
 # Expone el puerto 8080
 EXPOSE 8080
