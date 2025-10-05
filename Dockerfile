@@ -31,5 +31,5 @@ EXPOSE 8080
 # Define variables de entorno
 ENV JAVA_OPTS="-Xmx400m -Xss512k"
 
-# Comando para ejecutar la aplicación
-CMD ["java", "-jar", "app.jar"]
+# Verifica que el JAR existe y ejecuta la aplicación
+CMD ["sh", "-c", "ls -la /app && java $JAVA_OPTS -jar /app/app.jar"]
